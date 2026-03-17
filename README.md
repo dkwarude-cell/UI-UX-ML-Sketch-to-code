@@ -301,19 +301,3 @@ MIT License - feel free to use this in your projects!
 - [ ] Custom LLM model support
 - [ ] Batch code generation
 
-## 🎉 Acknowledgments
-
-Built with ❤️ using cutting-edge web technologies and AI-powered code generation.
-
----
-
-**Made with ❤️ by the SketchToCode team**
-
-1. Push to GitHub
-2. Import to [Vercel](https://vercel.com)
-3. Add `ANTHROPIC_API_KEY` in **Settings → Environment Variables**
-4. Deploy!
-
-## License
-
-MIT
