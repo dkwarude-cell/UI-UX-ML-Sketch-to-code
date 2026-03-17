@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
-          max_tokens: 4096,
+          max_tokens: 2048,
           stream: true,
           messages: [
             {
