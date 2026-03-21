@@ -20,6 +20,7 @@ interface AppState {
   generatedCode: string;
   isGenerating: boolean;
   generationMeta: GenerationMeta | null;
+  generationId: string | null;
 
   // Preview
   deviceView: DeviceView;
@@ -32,6 +33,7 @@ interface AppState {
   appendGeneratedCode: (chunk: string) => void;
   setIsGenerating: (val: boolean) => void;
   setGenerationMeta: (meta: GenerationMeta | null) => void;
+  setGenerationId: (id: string | null) => void;
   setDeviceView: (view: DeviceView) => void;
 
   // History actions
@@ -52,6 +54,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   generatedCode: "",
   isGenerating: false,
   generationMeta: null,
+  generationId: null,
 
   deviceView: "desktop",
 
@@ -63,6 +66,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => ({ generatedCode: state.generatedCode + chunk })),
   setIsGenerating: (val) => set({ isGenerating: val }),
   setGenerationMeta: (meta) => set({ generationMeta: meta }),
+  setGenerationId: (id) => set({ generationId: id }),
   setDeviceView: (view) => set({ deviceView: view }),
 
   pushHistory: (json) => {

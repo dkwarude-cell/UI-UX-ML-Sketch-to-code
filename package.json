@@ -14,6 +14,7 @@
     "autoprefixer": "^10.4.27",
     "fabric": "^5.5.2",
     "framer-motion": "^12.35.1",
+    "recharts": "^2.12.7",
     "next": "^14.2.35",
     "react": "19.2.3",
     "react-dom": "19.2.3",

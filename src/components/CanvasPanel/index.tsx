@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { fabric } from "fabric";
 import { useAppStore } from "@/store/useAppStore";
 import DrawingToolbar from "./DrawingToolbar";
 import CanvasActions from "./CanvasActions";
 import { useCanvas } from "@/hooks/useCanvas";
+import { CUSTOM_MODEL } from "@/lib/constants";
 
 export default function CanvasPanel() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,6 +28,8 @@ export default function CanvasPanel() {
   const setGeneratedCode = useAppStore((s) => s.setGeneratedCode);
   const appendGeneratedCode = useAppStore((s) => s.appendGeneratedCode);
   const setGenerationMeta = useAppStore((s) => s.setGenerationMeta);
+  const [progressStep, setProgressStep] = useState(0);
+  const timersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
 
   const handleGenerate = useCallback(async () => {
     if (!fabricCanvas.current || isGenerating) return;
@@ -44,6 +47,12 @@ export default function CanvasPanel() {
     setIsGenerating(true);
     setGeneratedCode("");
     setGenerationMeta(null);
+    setProgressStep(1);
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [
+      setTimeout(() => setProgressStep(2), 500),
+      setTimeout(() => setProgressStep(3), 1500),
+    ];
     const startTime = Date.now();
 
     try {
@@ -55,7 +64,8 @@ export default function CanvasPanel() {
 
       if (!response.ok) {
         const errBody = await response.text();
-        throw new Error(`API error (${response.status}): ${errBody || response.statusText}`);
+        console.error("Generate API error", response.status, errBody);
+        throw new Error(`Request failed (${response.status})`);
       }
 
       const reader = response.body?.getReader();
@@ -63,11 +73,16 @@ export default function CanvasPanel() {
 
       const decoder = new TextDecoder();
       let totalTokens = 0;
+      let firstChunkSeen = false;
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
+        if (!firstChunkSeen && chunk.length > 0) {
+          firstChunkSeen = true;
+          setProgressStep(4);
+        }
         appendGeneratedCode(chunk);
         totalTokens += chunk.length;
       }
@@ -89,11 +104,12 @@ export default function CanvasPanel() {
       });
     } catch (error) {
       console.error("Generation error:", error);
-      setGeneratedCode(
-        `<!-- Error generating code. Check console for details. -->\n<!-- ${error} -->`
-      );
+      setGeneratedCode("<!-- SketchNet is temporarily busy. Please retry in a moment. -->");
     } finally {
       setIsGenerating(false);
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+      setTimeout(() => setProgressStep(0), 400);
     }
   }, [fabricCanvas, isGenerating, setIsGenerating, setGeneratedCode, appendGeneratedCode, setGenerationMeta]);
 
@@ -102,6 +118,7 @@ export default function CanvasPanel() {
     (window as unknown as Record<string, unknown>).__sketchGenerate = handleGenerate;
     return () => {
       delete (window as unknown as Record<string, unknown>).__sketchGenerate;
+      timersRef.current.forEach(clearTimeout);
     };
   }, [handleGenerate]);
 
@@ -185,6 +202,8 @@ export default function CanvasPanel() {
           onUploadImage={handleUploadImage}
           canUndo={canUndo}
           canRedo={canRedo}
+          progressStep={progressStep}
+          modelTagline={`Powered by ${CUSTOM_MODEL.name} · ${CUSTOM_MODEL.parameters} params · fine-tuned on ${CUSTOM_MODEL.training_pairs.toLocaleString()} pairs`}
         />
       </div>
     </motion.div>

@@ -8,6 +8,7 @@ export function useGenerate() {
   const setGeneratedCode = useAppStore((s) => s.setGeneratedCode);
   const appendGeneratedCode = useAppStore((s) => s.appendGeneratedCode);
   const setGenerationMeta = useAppStore((s) => s.setGenerationMeta);
+  const setGenerationId = useAppStore((s) => s.setGenerationId);
   const isGenerating = useAppStore((s) => s.isGenerating);
 
   const generate = useCallback(
@@ -17,6 +18,7 @@ export function useGenerate() {
       setIsGenerating(true);
       setGeneratedCode("");
       setGenerationMeta(null);
+      setGenerationId(null);
       const startTime = Date.now();
 
       try {
@@ -33,6 +35,9 @@ export function useGenerate() {
 
         const reader = response.body?.getReader();
         if (!reader) throw new Error("No readable stream");
+
+        const genId = response.headers.get("x-generation-id");
+        if (genId) setGenerationId(genId);
 
         const decoder = new TextDecoder();
         let totalChars = 0;
@@ -58,7 +63,7 @@ export function useGenerate() {
         setIsGenerating(false);
       }
     },
-    [isGenerating, setIsGenerating, setGeneratedCode, appendGeneratedCode, setGenerationMeta]
+    [isGenerating, setIsGenerating, setGeneratedCode, appendGeneratedCode, setGenerationMeta, setGenerationId]
   );
 
   return { generate, isGenerating };

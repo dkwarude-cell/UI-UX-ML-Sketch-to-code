@@ -9,8 +9,10 @@ import DeviceFrame from "./DeviceFrame";
 export default function PreviewPanel() {
   const generatedCode = useAppStore((s) => s.generatedCode);
   const deviceView = useAppStore((s) => s.deviceView);
+  const generationId = useAppStore((s) => s.generationId);
   const [debouncedCode, setDebouncedCode] = useState("");
   const [flashKey, setFlashKey] = useState(0);
+  const [feedbackState, setFeedbackState] = useState<"idle" | "sending" | "sent">("idle");
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Debounce code updates
@@ -32,6 +34,22 @@ export default function PreviewPanel() {
 
   const deviceConfig = DEVICE_VIEWS.find((d) => d.id === deviceView);
   const iframeWidth = deviceConfig?.width || "100%";
+
+  const sendFeedback = async (rating: "good" | "bad") => {
+    if (!generationId || !debouncedCode) return;
+    setFeedbackState("sending");
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ generation_id: generationId, rating, html: debouncedCode }),
+      });
+      setFeedbackState("sent");
+      setTimeout(() => setFeedbackState("idle"), 2500);
+    } catch (e) {
+      setFeedbackState("idle");
+    }
+  };
 
   return (
     <motion.div
@@ -97,6 +115,28 @@ export default function PreviewPanel() {
               }}
               title="Preview"
             />
+            <div className="flex items-center gap-2 px-3 py-2 text-xs" style={{ color: "var(--text-secondary)" }}>
+              <span>Feedback:</span>
+              <button
+                onClick={() => sendFeedback("good")}
+                className="px-2 py-1 rounded-md"
+                style={{ background: "rgba(16,185,129,0.12)", color: "#10b981" }}
+                disabled={!generationId || feedbackState === "sending"}
+              >
+                👍 Good
+              </button>
+              <button
+                onClick={() => sendFeedback("bad")}
+                className="px-2 py-1 rounded-md"
+                style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444" }}
+                disabled={!generationId || feedbackState === "sending"}
+              >
+                👎 Bad
+              </button>
+              <span className="ml-auto text-[11px]">
+                {feedbackState === "sent" ? "Thanks!" : generationId ? `id ${generationId.slice(0, 8)}` : ""}
+              </span>
+            </div>
           </motion.div>
         ) : (
           <div

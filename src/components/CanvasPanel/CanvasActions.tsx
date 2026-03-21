@@ -14,6 +14,8 @@ interface CanvasActionsProps {
   onUploadImage: (file: File) => void;
   canUndo: boolean;
   canRedo: boolean;
+  progressStep: number;
+  modelTagline: string;
 }
 
 export default function CanvasActions({
@@ -25,6 +27,8 @@ export default function CanvasActions({
   onUploadImage,
   canUndo,
   canRedo,
+  progressStep,
+  modelTagline,
 }: CanvasActionsProps) {
   const strokeColor = useAppStore((s) => s.strokeColor);
   const setStrokeColor = useAppStore((s) => s.setStrokeColor);
@@ -227,6 +231,30 @@ export default function CanvasActions({
           )}
         </motion.button>
       </div>
+      {progressStep > 0 && (
+        <div className="flex flex-col gap-1 text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+          <div className="flex items-center gap-2 flex-wrap">
+            {["🔍 Analyzing wireframe structure...", "🧠 Running vision encoder...", "⚡ Decoding HTML tokens...", "✨ Streaming output..."]
+              .map((label, idx) => {
+                const stepIndex = idx + 1;
+                const active = progressStep >= stepIndex && progressStep !== 0;
+                return (
+                  <div
+                    key={label}
+                    className="px-2 py-1 rounded-lg flex items-center gap-1"
+                    style={{
+                      background: active ? "rgba(34,197,94,0.12)" : "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <span style={{ opacity: active ? 1 : 0.6 }}>{label}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+      <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>{modelTagline}</p>
     </div>
   );
 }

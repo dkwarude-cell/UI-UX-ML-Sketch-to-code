@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { KEYBOARD_SHORTCUTS } from "@/lib/constants";
+import ModelStatusBadge from "./ModelStatusBadge";
 
 export default function AppHeader() {
   return (
@@ -64,6 +65,7 @@ export default function AppHeader() {
 
       {/* Right - Links */}
       <div className="flex items-center gap-3">
+        <ModelStatusBadge />
         <a
           href="https://github.com"
           target="_blank"
@@ -77,6 +79,7 @@ export default function AppHeader() {
           </svg>
         </a>
         <button
+          onClick={() => (window.location.href = "/training")}
           className="text-xs font-semibold px-4 py-2 rounded-lg transition-all hover:opacity-90"
           style={{
             background: "linear-gradient(120deg, #8b5cf6, #22d3ee)",
@@ -85,7 +88,7 @@ export default function AppHeader() {
             boxShadow: "0 10px 25px rgba(34, 211, 238, 0.35)",
           }}
         >
-          Start converting →
+          Model Dashboard →
         </button>
       </div>
     </motion.header>
