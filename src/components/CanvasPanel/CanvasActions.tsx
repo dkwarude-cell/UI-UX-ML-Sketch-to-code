@@ -57,8 +57,8 @@ export default function CanvasActions({
     <div
       className="absolute bottom-0 left-0 right-0 z-10 p-3 flex flex-col gap-2.5"
       style={{
-        background: "linear-gradient(transparent, rgba(255,255,255,0.95) 30%)",
-        backdropFilter: "blur(8px)",
+        background: "linear-gradient(transparent, rgba(15,23,42,0.35) 18%, rgba(15,23,42,0.55) 55%, rgba(15,23,42,0.65))",
+        backdropFilter: "blur(12px)",
       }}
     >
       {/* Color & Width Row */}
@@ -106,12 +106,12 @@ export default function CanvasActions({
           <input
             type="range"
             min={1}
-            max={12}
+            max={24}
             value={strokeWidth}
             onChange={(e) => setStrokeWidth(Number(e.target.value))}
             className="flex-1 h-1 rounded-full appearance-none cursor-pointer"
             style={{
-              background: `linear-gradient(to right, var(--accent-blue) 0%, var(--accent-blue) ${((strokeWidth - 1) / 11) * 100}%, var(--border) ${((strokeWidth - 1) / 11) * 100}%, var(--border) 100%)`,
+              background: `linear-gradient(to right, var(--accent-blue) 0%, var(--accent-blue) ${((strokeWidth - 1) / 23) * 100}%, var(--border) ${((strokeWidth - 1) / 23) * 100}%, var(--border) 100%)`,
             }}
           />
         </div>
@@ -124,11 +124,11 @@ export default function CanvasActions({
             onClick={handleUndo}
             animate={shaking ? { x: [0, -4, 4, -4, 0] } : {}}
             transition={{ duration: 0.3 }}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              color: canUndo ? "var(--text-secondary)" : "var(--text-muted)",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              color: canUndo ? "#E2E8F0" : "rgba(226,232,240,0.5)",
               cursor: canUndo ? "pointer" : "default",
               opacity: canUndo ? 1 : 0.5,
             }}
@@ -138,11 +138,11 @@ export default function CanvasActions({
           <button
             onClick={onRedo}
             disabled={!canRedo}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              color: canRedo ? "var(--text-secondary)" : "var(--text-muted)",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              color: canRedo ? "#E2E8F0" : "rgba(226,232,240,0.5)",
               cursor: canRedo ? "pointer" : "default",
               opacity: canRedo ? 1 : 0.5,
             }}
@@ -151,33 +151,34 @@ export default function CanvasActions({
           </button>
           <button
             onClick={onClear}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors hover:bg-red-50"
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              color: "var(--text-secondary)",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              color: "#F8FAFC",
+              boxShadow: "0 0 0 1px rgba(248, 113, 113, 0.25)",
             }}
           >
             ✕ Clear
           </button>
           <button
             onClick={onExportPng}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              color: "var(--text-secondary)",
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              color: "#E2E8F0",
             }}
           >
             ↓ PNG
           </button>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors hover:bg-blue-50"
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
             style={{
-              background: "var(--bg-surface)",
-              border: "1px solid var(--border)",
-              color: "var(--accent-blue)",
+              background: "rgba(124,132,255,0.16)",
+              border: "1px solid rgba(124,132,255,0.35)",
+              color: "#DCE6FF",
             }}
             title="Upload a JPEG/JPG image"
           >

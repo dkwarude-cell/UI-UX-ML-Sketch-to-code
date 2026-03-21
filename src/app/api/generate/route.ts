@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/constants";
 
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   try {
     const { image } = await req.json();
@@ -28,8 +30,9 @@ export async function POST(req: NextRequest) {
           "X-Title": "SketchToCode",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          max_tokens: 2048,
+          model: process.env.NEXT_PUBLIC_AI_MODEL || "google/gemini-2.5-flash",
+          max_tokens: Number(process.env.NEXT_PUBLIC_MAX_TOKENS || 800),
+          temperature: 0.15,
           stream: true,
           messages: [
             {

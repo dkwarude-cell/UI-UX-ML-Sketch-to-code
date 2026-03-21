@@ -9,32 +9,37 @@ export default function AppHeader() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="h-12 flex items-center justify-between px-5 border-b"
+      className="h-14 flex items-center justify-between px-6 glass-panel"
       style={{
-        background: "#FFFFFF",
         borderColor: "var(--border)",
-        boxShadow: "var(--shadow-sm)",
+        background:
+          "linear-gradient(120deg, rgba(124, 132, 255, 0.24), rgba(124, 132, 255, 0) 35%), rgba(255, 255, 255, 0.04)",
       }}
     >
       {/* Left - Logo */}
       <div className="flex items-center gap-2">
-        <div
-          className="flex items-center gap-0.5 font-extrabold text-lg tracking-tight"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          <span style={{ color: "var(--text-primary)" }}>Sketch</span>
-          <span style={{ color: "var(--accent-blue)" }}>To</span>
-          <span style={{ color: "var(--text-primary)" }}>Code</span>
+        <div className="w-9 h-9 rounded-2xl flex items-center justify-center shadow-md" style={{
+          background: "linear-gradient(135deg, #8b5cf6, #22d3ee)",
+          boxShadow: "0 10px 30px rgba(124, 132, 255, 0.35)",
+        }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 3L4 8v8l8 5 8-5V8l-8-5z"
+              stroke="#f8fafc"
+              strokeWidth="1.3"
+              strokeLinejoin="round"
+            />
+            <path d="M8 10l4 2.5 4-2.5" stroke="#f8fafc" strokeWidth="1.3" strokeLinecap="round" />
+          </svg>
         </div>
-        <span
-          className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
-          style={{
-            background: "rgba(37, 99, 235, 0.08)",
-            color: "var(--accent-blue)",
-          }}
-        >
-          beta
-        </span>
+        <div className="flex flex-col leading-tight">
+          <span className="font-extrabold text-lg tracking-tight" style={{ color: "var(--text-primary)" }}>
+            SketchToCode
+          </span>
+          <span className="text-[11px] font-semibold" style={{ color: "var(--text-muted)", letterSpacing: "0.4px" }}>
+            Timber-inspired workspace
+          </span>
+        </div>
       </div>
 
       {/* Center - Keyboard Shortcuts */}
@@ -44,7 +49,7 @@ export default function AppHeader() {
             <kbd
               className="px-1.5 py-0.5 text-[10px] font-mono rounded"
               style={{
-                background: "var(--bg-surface)",
+                background: "rgba(255, 255, 255, 0.08)",
                 border: "1px solid var(--border)",
                 color: "var(--text-secondary)",
                 fontFamily: "'JetBrains Mono', monospace",
@@ -63,8 +68,8 @@ export default function AppHeader() {
           href="https://github.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="p-1.5 rounded-md transition-colors hover:bg-gray-100"
-          style={{ color: "var(--text-muted)" }}
+          className="p-1.5 rounded-md transition-colors"
+          style={{ color: "var(--text-muted)", background: "rgba(255,255,255,0.05)" }}
           title="GitHub"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -72,14 +77,15 @@ export default function AppHeader() {
           </svg>
         </a>
         <button
-          className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-all hover:opacity-90"
+          className="text-xs font-semibold px-4 py-2 rounded-lg transition-all hover:opacity-90"
           style={{
-            background: "var(--text-primary)",
-            color: "#FFFFFF",
+            background: "linear-gradient(120deg, #8b5cf6, #22d3ee)",
+            color: "#0b1021",
             fontFamily: "'Plus Jakarta Sans', sans-serif",
+            boxShadow: "0 10px 25px rgba(34, 211, 238, 0.35)",
           }}
         >
-          Deploy on Vercel ▲
+          Start converting →
         </button>
       </div>
     </motion.header>

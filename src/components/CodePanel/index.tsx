@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
 import CodeActions from "./CodeActions";
@@ -25,15 +25,38 @@ export default function CodePanel() {
   const isGenerating = useAppStore((s) => s.isGenerating);
   const setGeneratedCode = useAppStore((s) => s.setGeneratedCode);
   const prevCodeLength = useRef(0);
+  const changeTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Track code length changes for animation effect
   useEffect(() => {
     prevCodeLength.current = generatedCode.length;
   }, [generatedCode]);
 
+  // Debounce edits to avoid re-render on every streamed chunk
+  const setGeneratedCodeDebounced = useCallback(
+    (value: string) => {
+      if (changeTimer.current) {
+        clearTimeout(changeTimer.current);
+      }
+      changeTimer.current = setTimeout(() => {
+        setGeneratedCode(value);
+        changeTimer.current = null;
+      }, 120);
+    },
+    [setGeneratedCode]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (changeTimer.current) {
+        clearTimeout(changeTimer.current);
+      }
+    };
+  }, []);
+
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined && !isGenerating) {
-      setGeneratedCode(value);
+      setGeneratedCodeDebounced(value);
     }
   };
 
@@ -44,15 +67,17 @@ export default function CodePanel() {
       initial={{ y: 30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
-      className="flex flex-col h-full"
-      style={{ background: "var(--bg-panel)" }}
+      className="flex flex-col h-full glass-panel"
+      style={{
+        background: "rgba(255,255,255,0.05)",
+        borderColor: "var(--border)",
+      }}
     >
       {/* Panel Header */}
       <div
-        className="h-8 flex items-center justify-between px-4 shrink-0"
+        className="h-9 flex items-center justify-between px-4 shrink-0 glass-header"
         style={{
           borderBottom: "1px solid var(--border)",
-          background: "var(--bg-surface)",
         }}
       >
         <div className="flex items-center gap-2">
@@ -72,8 +97,8 @@ export default function CodePanel() {
               transition={{ repeat: Infinity, duration: 1 }}
               className="text-[10px] font-medium px-2 py-0.5 rounded-full"
               style={{
-                background: "rgba(124, 58, 237, 0.08)",
-                color: "var(--accent-purple)",
+                background: "rgba(196, 132, 255, 0.18)",
+                color: "#f4e9ff",
               }}
             >
               streaming...
@@ -88,7 +113,7 @@ export default function CodePanel() {
         <MonacoEditor
           height="100%"
           language="html"
-          theme="vs"
+          theme="vs-dark"
           value={displayCode}
           onChange={handleEditorChange}
           options={{

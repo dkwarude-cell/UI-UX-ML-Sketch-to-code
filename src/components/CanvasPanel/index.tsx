@@ -33,12 +33,13 @@ export default function CanvasPanel() {
 
     const canvas = fabricCanvas.current;
     const dataUrl = canvas.toDataURL({
-      format: "png",
-      multiplier: 1,
+      format: "jpeg",
+      quality: 0.7,
+      multiplier: 0.75,
     });
 
     // Remove data URL prefix to get pure base64
-    const base64 = dataUrl.replace(/^data:image\/png;base64,/, "");
+    const base64 = dataUrl.replace(/^data:image\/(png|jpeg);base64,/, "");
 
     setIsGenerating(true);
     setGeneratedCode("");
@@ -142,17 +143,20 @@ export default function CanvasPanel() {
       initial={{ x: -40, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0, ease: "easeOut" }}
-      className="flex flex-col h-full"
-      style={{ background: "var(--bg-panel)" }}
+      className="flex flex-col h-full glass-panel"
+      style={{
+        background: "rgba(255,255,255,0.05)",
+        borderColor: "var(--border)",
+      }}
     >
       {/* Panel Header */}
       <div
-        className="h-8 flex items-center px-4 text-xs font-semibold shrink-0"
+        className="h-9 flex items-center px-4 text-xs font-semibold shrink-0 glass-header"
         style={{
           borderBottom: "1px solid var(--border)",
           color: "var(--text-secondary)",
-          background: "var(--bg-surface)",
           fontFamily: "'Plus Jakarta Sans', sans-serif",
+          letterSpacing: "0.2px",
         }}
       >
         <span className="mr-2" style={{ color: "var(--accent-blue)" }}>●</span>
@@ -160,7 +164,16 @@ export default function CanvasPanel() {
       </div>
 
       {/* Canvas Area */}
-      <div ref={containerRef} className="relative flex-1 overflow-hidden">
+      <div
+        ref={containerRef}
+        className="relative flex-1 overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(circle at 25% 25%, rgba(255,255,255,0.06), transparent 28%)," +
+            "radial-gradient(circle at 75% 20%, rgba(124,132,255,0.08), transparent 32%)," +
+            "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))",
+        }}
+      >
         <canvas ref={canvasRef} />
         <DrawingToolbar />
         <CanvasActions

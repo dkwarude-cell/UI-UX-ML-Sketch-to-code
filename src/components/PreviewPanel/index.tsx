@@ -38,15 +38,17 @@ export default function PreviewPanel() {
       initial={{ x: 40, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-      className="flex flex-col h-full"
-      style={{ background: "var(--bg-panel)" }}
+      className="flex flex-col h-full glass-panel"
+      style={{
+        background: "rgba(255,255,255,0.05)",
+        borderColor: "var(--border)",
+      }}
     >
       {/* Panel Header */}
       <div
-        className="h-8 flex items-center justify-between px-4 shrink-0"
+        className="h-9 flex items-center justify-between px-4 shrink-0 glass-header"
         style={{
           borderBottom: "1px solid var(--border)",
-          background: "var(--bg-surface)",
         }}
       >
         <span
@@ -65,7 +67,9 @@ export default function PreviewPanel() {
       {/* Preview Area */}
       <div
         className="flex-1 flex items-start justify-center overflow-auto p-4"
-        style={{ background: "var(--bg-surface)" }}
+        style={{
+          background: "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
+        }}
       >
         {debouncedCode ? (
           <motion.div
@@ -80,14 +84,14 @@ export default function PreviewPanel() {
               transition: "width 0.3s ease",
               margin: iframeWidth !== "100%" ? "0 auto" : undefined,
             }}
-            className="rounded-lg overflow-hidden"
+            className="rounded-2xl overflow-hidden"
           >
             <iframe
               srcDoc={debouncedCode}
               sandbox="allow-scripts allow-same-origin"
-              className="w-full h-full border-0 rounded-lg"
+              className="w-full h-full border-0 rounded-2xl"
               style={{
-                background: "#FFFFFF",
+                background: "#0f1629",
                 boxShadow: "var(--shadow-lg)",
                 border: "1px solid var(--border)",
               }}

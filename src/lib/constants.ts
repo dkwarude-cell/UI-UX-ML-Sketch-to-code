@@ -10,11 +10,16 @@ export const TOOLS = [
 export type ToolId = (typeof TOOLS)[number]["id"];
 
 export const COLOR_SWATCHES = [
-  "#1A1D23",
-  "#2563EB",
-  "#16A34A",
-  "#EF4444",
-  "#F59E0B",
+  "#0F172A", // graphite
+  "#1D4ED8", // cobalt
+  "#10B981", // emerald
+  "#F59E0B", // amber
+  "#EF4444", // vermillion
+  "#9333EA", // violet
+  "#14B8A6", // teal
+  "#3B82F6", // azure
+  "#F97316", // orange
+  "#FFFFFF", // white ink
 ];
 
 export const DEVICE_VIEWS = [
@@ -27,12 +32,20 @@ export type DeviceView = (typeof DEVICE_VIEWS)[number]["id"];
 
 export const MAX_HISTORY = 50;
 
-export const SYSTEM_PROMPT = `You are an expert frontend developer. The user will send you a hand-drawn UI wireframe sketch.
-Analyze the layout carefully — identify all UI regions, boxes, text labels, buttons, forms,
-navigation bars, cards, and other components visible in the sketch.
-Generate a complete, semantic HTML document with embedded Tailwind CSS (via CDN <script src="https://cdn.tailwindcss.com"></script>) that faithfully
-reproduces the layout shown in the sketch. Use placeholder text and placeholder images (via https://placehold.co) where needed.
-IMPORTANT: Return ONLY the raw HTML code starting with <!DOCTYPE html>. Do NOT wrap in markdown code fences. Do NOT include any explanation or commentary. Just the pure HTML.`;
+export const SYSTEM_PROMPT = `You are an expert frontend developer. The user sends a hand-drawn UI wireframe sketch (image).
+Produce HTML + Tailwind that LITERALLY mirrors what is visible—no extra UI, no stock dashboards.
+
+Hard rules:
+- Reconstruct only what you see. Do NOT add navs/cards/buttons unless present.
+- Preserve relative positions, sizes, and aspect ratios. If the sketch has a rectangle with a circle centered inside, render exactly that: an outlined rectangle with margins similar to the sketch and a centered outlined circle inside it. Do not collapse shapes into bars.
+- Use thin neutral strokes (#0f172a / #111827) on white background unless color is clearly shown.
+- If text is blank, omit it; if a region is empty, leave it empty.
+- Tailwind via CDN (<script src="https://cdn.tailwindcss.com"></script>).
+- Return ONLY raw HTML starting with <!DOCTYPE html>; no markdown fences or explanations.
+
+Few-shot style guidance (fidelity first):
+Sketch: single circle centered on the page → HTML: full-page flex with one outlined circle centered; nothing else.
+Sketch: a rectangle with a centered ellipse inside → HTML: a container with an outlined rectangle sized to ~70% viewport width, and an outlined ellipse centered within it; no extra elements.`;
 
 export const PLACEHOLDER_CODE = `<!-- Draw a wireframe on the canvas and click "Generate Code" to get started -->
 <!-- Your generated HTML + Tailwind CSS code will appear here -->`;

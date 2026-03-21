@@ -5,22 +5,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg-app: #F8FAFB;
-  --bg-panel: #FFFFFF;
-  --bg-hover: #F0F3F6;
-  --bg-surface: #F4F6F8;
-  --text-primary: #1A1D23;
-  --text-secondary: #3D4450;
-  --text-muted: #8892A4;
-  --accent-blue: #2563EB;
-  --accent-green: #16A34A;
-  --accent-purple: #7C3AED;
-  --accent-red: #EF4444;
-  --border: #E2E6EB;
-  --border-light: #EDF0F3;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  /* Neon twilight palette inspired by the provided reference */
+  --bg-app: radial-gradient(circle at 20% 20%, rgba(151, 71, 255, 0.25), transparent 28%),
+    radial-gradient(circle at 80% 0%, rgba(0, 227, 255, 0.18), transparent 32%),
+    linear-gradient(135deg, #0b1021 0%, #0e0f2b 45%, #0a0c1c 100%);
+  --bg-panel: rgba(255, 255, 255, 0.06);
+  --bg-hover: rgba(255, 255, 255, 0.08);
+  --bg-surface: rgba(255, 255, 255, 0.04);
+  --text-primary: #f9fbff;
+  --text-secondary: #d5ddff;
+  --text-muted: #9fb2d9;
+  --accent-blue: #7ce7ff;
+  --accent-green: #3ef3c6;
+  --accent-purple: #c484ff;
+  --accent-red: #ff7b7b;
+  --border: rgba(255, 255, 255, 0.12);
+  --border-light: rgba(255, 255, 255, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --glass-blur: blur(18px);
 }
 
 * {
@@ -35,6 +39,18 @@ body {
   padding: 0;
   overflow: hidden;
   height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(103, 232, 249, 0.18), transparent 35%),
+    radial-gradient(circle at 15% 75%, rgba(139, 92, 246, 0.2), transparent 32%),
+    linear-gradient(115deg, rgba(53, 21, 107, 0.6), rgba(6, 36, 63, 0.55));
+  filter: blur(40px);
+  opacity: 0.7;
+  z-index: -1;
 }
 
 ::-webkit-scrollbar {
@@ -109,4 +125,20 @@ body {
 
 .animate-slide-up {
   animation: slideUp 0.3s ease-out;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.glass-header {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border-bottom: 1px solid var(--border-light);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }

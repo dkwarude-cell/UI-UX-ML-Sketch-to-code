@@ -8,21 +8,25 @@ import {
   Group,
   Separator,
 } from "react-resizable-panels";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 
 // Dynamic imports to avoid SSR issues with Fabric.js and Monaco
-const CanvasPanel = dynamic(
+const CanvasPanelBase = dynamic(
   () => import("@/components/CanvasPanel"),
   { ssr: false }
 );
-const CodePanel = dynamic(
+const CodePanelBase = dynamic(
   () => import("@/components/CodePanel"),
   { ssr: false }
 );
-const PreviewPanel = dynamic(
+const PreviewPanelBase = dynamic(
   () => import("@/components/PreviewPanel"),
   { ssr: false }
 );
+
+const CanvasPanel = memo(CanvasPanelBase);
+const CodePanel = memo(CodePanelBase);
+const PreviewPanel = memo(PreviewPanelBase);
 
 export default function Home() {
   useKeyboardShortcuts();

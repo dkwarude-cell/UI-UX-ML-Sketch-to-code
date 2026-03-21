@@ -8,6 +8,8 @@ export function useCanvas(
   containerRef: React.RefObject<HTMLDivElement | null>
 ) {
   const fabricCanvas = useRef<fabric.Canvas | null>(null);
+  const rafRenderRef = useRef<number | null>(null);
+  const historyTimerRef = useRef<number | null>(null);
   const isDrawingShape = useRef(false);
   const shapeOrigin = useRef({ x: 0, y: 0 });
   const activeShape = useRef<fabric.Object | null>(null);
@@ -29,11 +31,29 @@ export function useCanvas(
     setCanRedo(historyIndex < canvasHistory.length - 1);
   }, [historyIndex, canvasHistory.length]);
 
+  const scheduleRender = useCallback(() => {
+    if (rafRenderRef.current !== null) return;
+    rafRenderRef.current = window.requestAnimationFrame(() => {
+      rafRenderRef.current = null;
+      fabricCanvas.current?.requestRenderAll();
+    });
+  }, []);
+
   const saveState = useCallback(() => {
     if (!fabricCanvas.current) return;
     const json = JSON.stringify(fabricCanvas.current.toJSON());
     pushHistory(json);
   }, [pushHistory]);
+
+  const queueSaveState = useCallback(() => {
+    if (historyTimerRef.current) {
+      window.clearTimeout(historyTimerRef.current);
+    }
+    historyTimerRef.current = window.setTimeout(() => {
+      historyTimerRef.current = null;
+      saveState();
+    }, 180);
+  }, [saveState]);
 
   // Initialize Fabric.js
   useEffect(() => {
@@ -57,6 +77,8 @@ export function useCanvas(
         backgroundColor: "#FFFFFF",
         isDrawingMode: true,
         selection: false,
+        renderOnAddRemove: false,
+        enableRetinaScaling: false,
       });
 
       // Configure pen
@@ -72,12 +94,12 @@ export function useCanvas(
       // Save state after drawing
       canvas.on("object:added", () => {
         if (!isDrawingShape.current) {
-          saveState();
+          queueSaveState();
         }
       });
 
       canvas.on("object:modified", () => {
-        saveState();
+        queueSaveState();
       });
 
       // Handle resize
@@ -86,7 +108,7 @@ export function useCanvas(
           const { width, height } = entry.contentRect;
           canvas.setWidth(width);
           canvas.setHeight(height - 100);
-          canvas.renderAll();
+          scheduleRender();
         }
       });
 
@@ -197,6 +219,7 @@ export function useCanvas(
 
         canvas.add(shape);
         activeShape.current = shape;
+        scheduleRender();
       });
     });
 
@@ -230,14 +253,14 @@ export function useCanvas(
         line.set({ x2: pointer.x, y2: pointer.y });
       }
 
-      canvas.renderAll();
+      scheduleRender();
     });
 
     canvas.on("mouse:up", () => {
       if (isDrawingShape.current) {
         isDrawingShape.current = false;
         activeShape.current = null;
-        saveState();
+        queueSaveState();
       }
     });
   }
@@ -266,7 +289,7 @@ export function useCanvas(
         canvas.add(text);
         canvas.setActiveObject(text);
         text.enterEditing();
-        saveState();
+        queueSaveState();
       });
     });
   }
@@ -275,28 +298,28 @@ export function useCanvas(
     const json = useAppStore.getState().undo();
     if (json && fabricCanvas.current) {
       fabricCanvas.current.loadFromJSON(JSON.parse(json), () => {
-        fabricCanvas.current?.renderAll();
+        scheduleRender();
       });
     }
-  }, []);
+  }, [scheduleRender]);
 
   const handleRedo = useCallback(() => {
     const json = useAppStore.getState().redo();
     if (json && fabricCanvas.current) {
       fabricCanvas.current.loadFromJSON(JSON.parse(json), () => {
-        fabricCanvas.current?.renderAll();
+        scheduleRender();
       });
     }
-  }, []);
+  }, [scheduleRender]);
 
   const handleClear = useCallback(() => {
     if (!fabricCanvas.current) return;
     fabricCanvas.current.clear();
     fabricCanvas.current.backgroundColor = "#FFFFFF";
-    fabricCanvas.current.renderAll();
+    scheduleRender();
     clearHistory();
-    saveState();
-  }, [clearHistory, saveState]);
+    queueSaveState();
+  }, [clearHistory, queueSaveState, scheduleRender]);
 
   const handleExportPng = useCallback(() => {
     if (!fabricCanvas.current) return;
